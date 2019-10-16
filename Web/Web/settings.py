@@ -22,6 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'y#p(%usxteyd9b3)&y$u9m1paq4vsfg!j(p0q1idz_(1bne@!t'
 
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -71,15 +73,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Web.wsgi.application'
 
 
-# Database
+DATABASES ={
+     
+    'default':{
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'webtable',
+        'USER': 'root',
+        'PASSWORD': '111',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        "TEST_CHARSET" : "utf-8"
+    }
+ }
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
