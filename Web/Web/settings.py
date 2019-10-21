@@ -132,8 +132,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "meida")  #注意:这里配置os的时候,不像配置static的时候要[],这里不需要[]
-MEDIA_URL = "/meida/"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")  #注意:这里配置os的时候,不像配置static的时候要[],这里不需要[]
+MEDIA_URL = "/media/"
 HERE = os.path.dirname(os.path.abspath(__file__))
 HERE = os.path.join(HERE, '../')
 STATICFILES_DIRS = (
@@ -142,3 +143,5 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(HERE, 'static/'),
 )
+
+STATIC_ROOT= os.path.join(BASE_DIR, "/static/") 
