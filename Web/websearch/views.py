@@ -7,7 +7,6 @@ import os
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.forms.models import model_to_dict
 import datetime
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, InvalidPage
 # Create your views here.
@@ -36,14 +35,21 @@ def getlist(request):
     nums=request.POST.get('limit')  if  request.POST.get('limit') else 10 #一页多少个
     if  request.POST.get('dizhi') :
         dizhi=request.POST.get('dizhi')
-        dic['dizhi']=dizhi
+        if dizhi:
+            dic['dizhi__icontains']=dizhi
     if request.POST.get('areaq') :
         area=request.POST.get('areaq') 
-        dic['area']=area
+        if area !="":
+            dic['area']=area
+    if request.POST.get('lx1') :
+        lx=request.POST.get('lx1') 
+        if lx !="":
+            dic['lx']=lx
     if dic:
         result =  Cjdj_info.objects.filter(**dic).values()
     else:
         result =  Cjdj_info.objects.all().values()
+    print(result)
     list_result = [entry for entry in result]
     p=Paginator(list_result ,int(nums))
     jishu=len(list_result )

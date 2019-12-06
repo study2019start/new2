@@ -14,8 +14,13 @@
    --position: absolute; 
    text-align:center;
    width: 60%;
+   margin-top:-15px;
+   margin-bottom:10px;
   }
-
+.layui-form-item{ 
+  clear: both;
+  height: inherit;
+  }
   </style>
 <body>
   <div id ="searchdemo">
@@ -45,7 +50,7 @@
        <div class="layui-inline" >
           <label class="layui-form-label" style="width:30px">类型</label>
           <div class="layui-input-inline" style="width:95px">
-            <select name="area1" lay-filter="qu" id="selectlx" >
+            <select name="area1" lay-filter="lx" id="selectlx" >
               <option value="" selected=""></option>
               <option value="住宅">住宅</option>
               <option value="商铺" >商业</option>
@@ -59,24 +64,35 @@
        </div>
           <div class="layui-inline">
             <label class="layui-form-label" style="width:30px">地址</label>
-            <div class="layui-input-inline" style="width: 281px">
+            <div class="layui-input-inline" style="width: 211px">
               <input id="dizhi1" type="text" name="dizhi"  autocomplete="off" placeholder="请输入地址" class="layui-input">
             </div>
           </div>
         </div>
+      </p>
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label" style="width:50px">时间：</label>
+            <div class="layui-input-inline" style="width: 155px">
+              <input type="text"   id="dates" lay-verify="date"  autocomplete="off" placeholder="选择日期" class="layui-input">
+                      </div>
+            <label class="layui-form-label" style="width:40px">&nbsp至：&nbsp&nbsp &nbsp&nbsp</label>
+            <div class="layui-input-inline" style="width: 155px">
+              <input type="text"   id="datee" lay-verify="date"  autocomplete="off" placeholder="选择日期" class="layui-input">
+            </div>
+          </div>
        </div>
-       <div id ="demo3">
+              <div id ="demo3">
             <div class="layui-input-block">
-              <button type="button" class="layui-btn" style="margin-left: -20px" lay-filter="subm">确定</button>
+              <button type="button" id="que" class="layui-btn" style="margin-left: -20px" >确定</button>
               <button type="reset" class="layui-btn layui-btn-primary" lay-filter="rend">重置</button>
             </div>
           </div>
-          
-        </form>
+          </form>
             <div style="text-align: center;">
         <div class="layui-inline">
     <table id="demo" lay-filter="test"></table>
-</div>>
+</div>
     </div>
     <script>
         layui.use([ 'layer', 'table','form','laydate'], function(){
@@ -85,17 +101,16 @@
   ,table = layui.table
   ,form = layui.form,
   laydate=layui.laydate;//表格
-  var dz=$(".dizhi1").val();
-  var ar=$(".selectqu").val();
+  laydate.render({
+    elem: '#datee'
+    });
+  laydate.render({  elem: '#dates'});
   var tlist=table.render({
     elem: '#demo'
     ,url: '/search/datalist/' //数据接口
     ,page: true //开启分页
     ,method:'post'
-    ,where:{'dizhi':dz,
-    'areaq':ar
-    }
-    ,limit:50
+     ,limit:30
     ,width: 850
     ,id:"tables"
     ,cols: [[ //表头
@@ -103,24 +118,22 @@
       ,{field: 'lx', title: '类型', width:80, sort: true}
       ,{field: 'area', title: '区', width:80, sort: true}
       ,{field: 'dizhi', title: '地址', width:250} 
-      ,{field: 'mianji', title: '面积', width: 80, sort: true}
-      ,{field: 'zongjia', title: '总价', width: 80, sort: true}
+      ,{field: 'mianji', title: '面积', width: 100, sort: true}
+      ,{field: 'zongjia', title: '总价', width: 100, sort: true}
       ,{field: 'dj', title: '单价', width: 120, sort: true}
-      ,{field: 'down',title: '下载', width: 80,templet: function(d){
+      ,{field: 'down',title: '下载', width: 60,templet: function(d){
         return  '<a href="/search/meida/'+d.down+'" target="_blank" class="layui-table-link">下载</a>'
       }}
-      ,{field: 'down', title: '下载', width: 80,templet: function(d){
+      ,{field: 'down', title: '下载', width: 60,templet: function(d){
         return  '<a href="/search/meida/'+d.down+'" target="_blank" class="layui-table-link">下载</a>'
       }}
     ]]
   });
-
     form.on('reset(rend)',function(data)
     {
       form.render();
     }
     );
-        
     form.on('select(qu)',function(data){
       
       ar=data.value;
@@ -129,7 +142,31 @@
            "areaq":ar
                    }
                    ,page: {
-    curr: 2 //重新从第 1 页开始
+    curr: 1 //重新从第 1 页开始
+  }
+       });
+    });
+    form.on('select(lx)',function(data){
+      lx11=data.value;
+       tlist.reload({
+         where:{
+           lx1:lx11,
+            }
+                   ,page: {
+    curr: 1 //重新从第 1 页开始
+  }
+       });
+    });
+    $("#que").click(function(){
+      var dz=$("#dizhi1").val();
+      var ar=$("#selectqu").val();
+       tlist.reload({
+         where:{
+           areaq:ar,
+           dizhi:dz
+                   }
+  ,page: {
+    curr: 1 //重新从第 1 页开始
   }
 
        });
