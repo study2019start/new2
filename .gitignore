@@ -1,7 +1,14 @@
 /Scripts
+
 /Include
 /Lib
 README.md
 pyvenv.cfg
 /Web/media
 /gonghang
+
+/Lib
+/include
+pip_selfcheck.json
+pyvenv.cfg
+

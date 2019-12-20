@@ -21,165 +21,357 @@
   clear: both;
   height: inherit;
   }
+  .sdn
+  {
+        color:rgb(39, 38, 38);
+        font-size:x-large;
+        cursor:Pointer;
+  }
+  .d{
+    margin-bottom: 15px;
+  }
   </style>
-<body>
-  <div id ="searchdemo">
-  <div id="demo2">
-    <form class="layui-form" action=""> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
-      <div class="layui-form-item">
-          <div class="layui-inline">
-          <label class="layui-form-label" style="width:30px">区</label>
-          <div class="layui-input-inline" style="width:95px;" >
-            <select name="area1" lay-filter="qu" id="selectqu"  >
-              <option value="" selected=""></option>
-              <option value="黄浦">黄浦</option>
-              <option value="静安" >静安</option>
-              <option value="长宁">长宁</option>
-              <option value="浦东新">浦东新</option>
-              <option value="虹口">虹口</option>
-              <option value="宝山">宝山</option>
-              <option value="杨浦">杨浦</option>
-              <option value="闵行">闵行</option> 
-              <option value="嘉定">嘉定</option>
-              <option value="金山">金山</option>
-              <option value="奉贤">奉贤</option>
-              <option value="青浦">青浦</option>
-            </select>
-          </div>
-       </div>
-       <div class="layui-inline" >
-          <label class="layui-form-label" style="width:30px">类型</label>
-          <div class="layui-input-inline" style="width:95px">
-            <select name="area1" lay-filter="lx" id="selectlx" >
-              <option value="" selected=""></option>
-              <option value="住宅">住宅</option>
-              <option value="商铺" >商业</option>
-              <option value="办公">办公</option>
-              <option value="工业">工业</option>
-              <option value="科研">科研</option>
-              <option value="车位">车位</option>
-              <option value="仓储">仓储</option>
-            </select>
-          </div>
-       </div>
-          <div class="layui-inline">
-            <label class="layui-form-label" style="width:30px">地址</label>
-            <div class="layui-input-inline" style="width: 211px">
-              <input id="dizhi1" type="text" name="dizhi"  autocomplete="off" placeholder="请输入地址" class="layui-input">
-            </div>
-          </div>
-        </div>
-      </p>
-        <div class="layui-form-item">
-          <div class="layui-inline">
-            <label class="layui-form-label" style="width:50px">时间：</label>
-            <div class="layui-input-inline" style="width: 155px">
-              <input type="text"   id="dates" lay-verify="date"  autocomplete="off" placeholder="选择日期" class="layui-input">
-                      </div>
-            <label class="layui-form-label" style="width:40px">&nbsp至：&nbsp&nbsp &nbsp&nbsp</label>
-            <div class="layui-input-inline" style="width: 155px">
-              <input type="text"   id="datee" lay-verify="date"  autocomplete="off" placeholder="选择日期" class="layui-input">
-            </div>
-          </div>
-       </div>
-              <div id ="demo3">
-            <div class="layui-input-block">
-              <button type="button" id="que" class="layui-btn" style="margin-left: -20px" >确定</button>
-              <button type="reset" class="layui-btn layui-btn-primary" lay-filter="rend">重置</button>
-            </div>
-          </div>
-          </form>
-            <div style="text-align: center;">
-        <div class="layui-inline">
-    <table id="demo" lay-filter="test"></table>
-</div>
+
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo">layui 后台布局</div>
+    <!-- 头部区域（可配合layui已有的水平导航）onclick="goto1(1000)"  -->
+    <ul class="layui-nav layui-layout-left"  id="header-e" >
+      <li class="layui-nav-item"><a id="cjcx"  value=1000 style="cursor:hand;">成交查询</a></li>
+      {% for row  in  first1 %}
+          <li class="layui-nav-item">
+            <a class="head" value={{row.id}}  style="cursor:hand;">{{row.name}}</a>
+            {%  if row.rows == 1 %}
+            <dl class="layui-nav-child">
+            {% for  rr in row.second %}
+            <dd><a class="heads" value={{rr.id}}  style="cursor:hand;">{{rr.name}}</a></dd>
+            {% endfor%}
+            </dl>
+            {% endif%}
+          </li>
+            {% endfor%}
+       
+      </li>
+    </ul>
+
+  </div>
+
+    <div class="layui-side layui-bg-black">
+      <div class="layui-side-scroll">
+        <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+        <ul class="layui-nav layui-nav-tree" id="left-e" lay-filter="test">
+            {% for row  in  first1 %}
+          <li class="layui-nav-item">
+            <a class="headleft" value={{row.id}}  style="cursor:hand;">{{row.name}}</a>
+            {%  if row.rows == 1 %}
+            <dl class="layui-nav-child">
+            {% for  rr in row.second %}
+            <dd><a class="headlefts" value={{rr.id}}  style="cursor:hand;">{{rr.name}}</a></dd>
+            {% endfor%}
+            </dl>
+            {% endif%}
+          </li>
+            {% endfor%}
+        </ul>
+      </div>
     </div>
-    <script>
-        layui.use([ 'layer', 'table','form','laydate'], function(){
-  var $ = layui.jquery;
-  var layer = layui.layer //弹层
-  ,table = layui.table
-  ,form = layui.form,
-  laydate=layui.laydate;//表格
-  laydate.render({
-    elem: '#datee'
-    });
-  laydate.render({  elem: '#dates'});
-  var tlist=table.render({
-    elem: '#demo'
-    ,url: '/search/datalist/' //数据接口
-    ,page: true //开启分页
-    ,method:'post'
-     ,limit:30
-    ,width: 850
-    ,id:"tables"
-    ,cols: [[ //表头
-      {field: 'id', title: 'ID', fixed: 'left',hide:true}
-      ,{field: 'lx', title: '类型', width:80, sort: true}
-      ,{field: 'area', title: '区', width:80, sort: true}
-      ,{field: 'dizhi', title: '地址', width:250} 
-      ,{field: 'mianji', title: '面积', width: 100, sort: true}
-      ,{field: 'zongjia', title: '总价', width: 100, sort: true}
-      ,{field: 'dj', title: '单价', width: 120, sort: true}
-      ,{field: 'down',title: '下载', width: 60,templet: function(d){
-        return  '<a href="/search/meida/'+d.down+'" target="_blank" class="layui-table-link">下载</a>'
-      }}
-      ,{field: 'down', title: '下载', width: 60,templet: function(d){
-        return  '<a href="/search/meida/'+d.down+'" target="_blank" class="layui-table-link">下载</a>'
-      }}
-    ]]
-  });
-    form.on('reset(rend)',function(data)
-    {
-      form.render();
-    }
-    );
-    form.on('select(qu)',function(data){
-      
-      ar=data.value;
-       tlist.reload({
-         where:{
-           "areaq":ar
-                   }
-                   ,page: {
-    curr: 1 //重新从第 1 页开始
-  }
-       });
-    });
-    form.on('select(lx)',function(data){
-      lx11=data.value;
-       tlist.reload({
-         where:{
-           lx1:lx11,
-            }
-                   ,page: {
-    curr: 1 //重新从第 1 页开始
-  }
-       });
-    });
-    $("#que").click(function(){
-      var dz=$("#dizhi1").val();
-      var ar=$("#selectqu").val();
-       tlist.reload({
-         where:{
-           areaq:ar,
-           dizhi:dz
-                   }
-  ,page: {
-    curr: 1 //重新从第 1 页开始
-  }
-
-       });
-    });
-    });
-        </script>
-      <script type="text/html" id="titleTpl">
-        <a href="/static/{{d}}" class="layui-table-link">下载</a>
-      </script>
-        <script>
-
-          </Script>
+  <div class="layui-body" style="margin-top: 25px" >
+  <div id ="searchdemo">
+      <fieldset class="layui-elem-field layui-field-title" style="margin-top: 40px;">
+          <legend>报告模板</legend>
+        </fieldset>
+        <div id ="con" style="margin: 0 auto;text-align: center">
+          <div class="d">
+          <a   class="sdn">1aaaaaa</a>
           </div>
+          <div class="d">
+          <a   class="sdn">2aaaaaa</a>
+          </div>
+          <a   class="sdn">3aaaaaa</a>
+          <a   class="sdn">4aaaaaa</a>
+          <a   class="sdn">5aaaaaa</a>
+          <a   class="sdn">6aaaaaa</a>
+          <a   class="sdn">7aaaaaa</a>
+          <a   class="sdn">8aaaaaa</a>
+          <a   class="sdn">9aaaaaa</a>
+          <a   class="sdn">10aaaaaa</a>
+          <a   class="sdn">11aaaaaa</a>
+          </div> 
+        <div id="test1" style="margin-top: 20px" ></div>
+    </div>
+   
+    <script>
+        function goto1(num)
+        { 
+        layui.use(['layer','laytpl'], function(){
+        var $ = layui.jquery,
+         laytpl=layui.laytpl;
+        var f=0
+          if(num==1000)
+          {
+              var gaptpl=democj.innerHTML;
+              data={};
+              laytpl(gaptpl).render(data,function(html){
+                  $("#searchdemo").empty();
+                  $("#searchdemo").html(html);
+                  f=f+1;
+                  if(f<2)
+                  tableshow();
+                  console.log(f);
+              });
+      
+          }
+        }
+        );
+        }  
+      
+          layui.use([ 'layer', 'table','form','laydate','laytpl','element','laypage'], function(){
+        var $ = layui.jquery;
+        var layer = layui.layer //弹层
+        ,table = layui.table
+        ,form = layui.form,
+        laydate=layui.laydate,
+        laytpl=layui.laytpl,
+        element=layui.element,
+        laypage=layui.laypage;//表格
+             //   form.render();
+            //var d=1;
+         /* $(".headi").each(function(index,elem){
+            var id=$(elem).attr("value");
+             $.ajax(
+            {
+                type:"POST",
+                dataType:"json",
+                url:"/search/list",
+                data:{"idn":id,csrfmiddlewaretoken: '{{ csrf_token }}'},
+                success:function(result)
+                {
+                   console.log(result);
+                  
+                  
+                  if(typeof(result) != "undefined")
+                  { 
+                    var si=d+""
+                                    
+                $.each(result,function(i,item){
+                  var si=d+""
+                  if(i<1)
+                  {
+                  $(elem).append("<dl class='layui-nav-child' id=h"+si+"></dl>")
+                }
+                 $("#h"+si).append("<dd><a onclick=goto1(\"sec"+item.id+"\")  style='cursor:hand;'>"+item.name+"</a></dd>");
+                  
+                  
+                  d=d+1;
+
+                });
+                  }
+                 
+                },
+            });
+            });  */
+      laypage.render({
+    elem: 'test1'
+    ,count: 10
+    ,limit: 10
+    ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+    ,jump: function(obj){
+      console.log(obj)
+    }
+  });
+        $("#cjcx").click(function(){
+            var f=0
+          if($(this).attr("value")==1000)
+          {
+              var gaptpl=democj.innerHTML;
+              data={};
+              laytpl(gaptpl).render(data,function(html){
+                  $("#searchdemo").empty();
+                  $("#searchdemo").html(html);
+                  f=f+1;
+                  if(f<2)
+                  //tableshow();
+                  form.render();
+                  laydate.render({
+          elem: '#datee'
+          });
+        laydate.render({  elem: '#dates'});
+        var tlist=table.render({
+          elem: '#demo'
+          ,url: '/search/datalist' //数据接口
+          ,page: true //开启分页
+          ,method:'post'
+           ,limit:30
+          ,width: 1035
+          ,id:"tables"
+          ,cols: [[ //表头
+            {field: 'id', title: 'ID', fixed: 'left',hide:true}
+            ,{field: 'lx', title: '类型', width:80, sort: true}
+            ,{field: 'area', title: '区', width:80, sort: true}
+            ,{field: 'dizhi', title: '地址', width:250} 
+            ,{field: 'mianji', title: '面积', width: 100, sort: true}
+            ,{field: 'zongjia', title: '总价', width: 100, sort: true}
+            ,{field: 'dj', title: '单价', width: 120, sort: true}
+            ,{field: 'cjdate', title: '成交日期', width: 150, sort: true,templet:function(d){
+              return d.cjdate.substring(0,10)
+            }}
+            ,{field: 'down',title: '下载', width: 60,templet: function(d){
+              return  '<a href="/search/meida/'+d.down+'" target="_blank" class="layui-table-link">下载</a>'
+            }}
+            ,{field: 'down', title: '下载2', width: 85,templet: function(d){
+              return  '<a onclick="downwen(this)"   style="cursor:hand;color:	#00BFFF"  value='+d.down+' >下载</a>'
+            }}
+          ]]
+        }); form.on('reset(rend)',function(data)
+          {
+            form.render();
+          }
+          );
+          form.on('select(qu)',function(data){
+                  ar=data.value;
+             tlist.reload({
+               where:{
+                 "areaq":ar
+                         }
+                         ,page: {
+          curr: 1 //重新从第 1 页开始
+        }
+          });
+          });
+          form.on('select(lx)',function(data){
+            lx11=data.value;
+             tlist.reload({
+               where:{
+                 lx1:lx11,
+                  }
+        ,page: {
+          curr: 1 //重新从第 1 页开始
+        }
+             });
+          });
+          $("#que").click(function(){
+            var dz=$("#dizhi1").val();
+            var ar=$("#selectqu").val();
+            var dstart=$("#dates").val();
+            var dend=$("#datee").val();
+             tlist.reload({
+               where:{
+                 areaq:ar,
+                 dizhi:dz,
+                 datestart:dstart,
+                 dateend:dend
+                     }
+        ,page: {
+          curr: 1 //重新从第 1 页开始
+        }
+            });
+          });
+                  console.log(f);
+              });
+      
+          }
+          });
+        } );
+        function downwen(obj){
+          layui.use('layer', function(){
+        var $ = layui.jquery;
+            var v1= $(obj).attr('value')
+            var demo5=$("#demo5")
+            var form = $("<form></form>");
+            //将表单放入body中
+            demo5.append(form);
+            //设置表单各项属性
+            form.attr("action","/search/datalist/getdo");
+            form.attr("method","post");
+            //创建input对象并放入表单中
+            var input = $("<input type='text' style='visibility:hidden' id='vv' name='vv' value='' />");
+            form.append(input);
+            $('#vv').attr('value',v1);
+            //提交表单
+            //alert($('#vv').val())
+            form.submit();
+            form.remove();
+          });
+        }
+        </script>
+             </div>
+          <script id="democj" type="text/html">
+            <div id="demo2">
+                <form class="layui-form" action=""> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+                  <div class="layui-form-item">
+                      <div class="layui-inline">
+                      <label class="layui-form-label" style="width:30px">区</label>
+                      <div class="layui-input-inline" style="width:95px;" >
+                        <select name="area1" lay-filter="qu" id="selectqu"  >
+                          <option value="" selected=""></option>
+                          <option value="黄浦">黄浦</option>
+                          <option value="静安" >静安</option>
+                          <option value="长宁">长宁</option>
+                          <option value="浦东新">浦东新</option>
+                          <option value="虹口">虹口</option>
+                          <option value="宝山">宝山</option>
+                          <option value="杨浦">杨浦</option>
+                          <option value="闵行">闵行</option> 
+                          <option value="嘉定">嘉定</option>
+                          <option value="金山">金山</option>
+                          <option value="奉贤">奉贤</option>
+                          <option value="青浦">青浦</option>
+                        </select>
+                      </div>
+                   </div>
+                   <div class="layui-inline" >
+                      <label class="layui-form-label" style="width:30px">类型</label>
+                      <div class="layui-input-inline" style="width:95px">
+                        <select name="area1" lay-filter="lx" id="selectlx" >
+                          <option value="" selected=""></option>
+                          <option value="住宅">住宅</option>
+                          <option value="商铺" >商业</option>
+                          <option value="办公">办公</option>
+                          <option value="工业">工业</option>
+                          <option value="科研">科研</option>
+                          <option value="车位">车位</option>
+                          <option value="仓储">仓储</option>
+                        </select>
+                      </div>
+                   </div>
+                      <div class="layui-inline">
+                        <label class="layui-form-label" style="width:30px">地址</label>
+                        <div class="layui-input-inline" style="width: 211px">
+                          <input id="dizhi1" type="text" name="dizhi"  autocomplete="off" placeholder="请输入地址" class="layui-input">
+                        </div>
+                      </div>
+                    </div>
+                  </p>
+                    <div class="layui-form-item">
+                      <div class="layui-inline">
+                        <label class="layui-form-label" style="width:50px">时间：</label>
+                        <div class="layui-input-inline" style="width: 155px">
+                          <input type="text"   id="dates" lay-verify="date"  autocomplete="off" placeholder="选择日期" class="layui-input">
+                                  </div>
+                        <label class="layui-form-label" style="width:40px">&nbsp至：&nbsp&nbsp &nbsp&nbsp</label>
+                        <div class="layui-input-inline" style="width: 155px">
+                          <input type="text"   id="datee" lay-verify="date"  autocomplete="off" placeholder="选择日期" class="layui-input">
+                        </div>
+                      </div>
+                   </div>
+                          <div id ="demo3">
+                        <div class="layui-input-block">
+                          <button type="button" id="que" class="layui-btn" style="margin-left: -20px" >确定</button>
+                          <button type="reset" class="layui-btn layui-btn-primary" lay-filter="rend">重置</button>
+                        </div>
+                      </div>
+                      </form>
+                        <div style="text-align: center;">
+                    <div class="layui-inline">
+                <table id="demo" lay-filter="test"></table>
+            </div>
+                </div>
+                <div id="demo5">
+                </div>
+              </div>
+          </script>
+ 
 </body>
 </head>
 </html>

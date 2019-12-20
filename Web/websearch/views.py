@@ -1,14 +1,18 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django import forms
-from websearch.models import user,Cjdj_info
+from websearch.models import user,Cjdj_info,First_class,First_classInfo,Second_class,Second_classInfo
 from django.forms import widgets
 import os
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import datetime
+from django.http import StreamingHttpResponse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, InvalidPage
+from django.conf import settings
+from django.utils.encoding import escape_uri_path
+from django.forms.models import model_to_dict
 # Create your views here.
 
 class DateEncoder(json.JSONEncoder):  
@@ -23,8 +27,66 @@ class DateEncoder(json.JSONEncoder):
 
 
 def vtable(request):
-    return render(request, 'websearch/table.html')
+    fi=First_class.objects.all().values()
+    fis=[a for a in fi]
+    ss=[]
+    for ff in fis:
+        f=First_class.objects.get(id=ff['id'])
+        ff['rows']=0
+        if f.second.count()>0:
+            ff['rows']=1
+            ff['second']=[a for a in f.second.all().values()]
+        ss.append(ff)
+    ffs={'first1':ss}
+    print(ss)
+    return render(request, 'websearch/table.html',ffs)
 
+
+def getlistmu(request):
+    idn=request.POST.get("idn")
+    r1 = Second_class.objects.filter(fid_id=idn).values()
+  
+    ss=[ r  for  r in r1]
+    s1=json.dumps(ss, ensure_ascii=False)
+    return HttpResponse(s1,content_type="application/json,charset=utf-8")
+
+
+
+def file_iterator(file_path, chunk_size=512):
+        """
+        文件生成器,防止文件过大，导致内存溢出
+        :param file_path: 文件绝对路径
+        :param chunk_size: 块大小
+        :return: 生成器
+        """
+        with open(file_path, mode='rb') as f:
+            while True:
+                c = f.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+@csrf_exempt
+def getdo(request):
+    print(request)
+    fi=request.POST.get('vv')
+    file_path=os.path.join(settings.MEDIA_ROOT,fi)
+    print(file_path)
+    if  os.path.isfile(file_path): 
+        file_name=os.path.basename(file_path)
+        print(file_name)
+        try:
+                # 设置响应头
+                # StreamingHttpResponse将文件内容进行流式传输，数据量大可以用这个方法
+            response = StreamingHttpResponse(file_iterator(file_path))
+                # 以流的形式下载文件,这样可以实现任意格式的文件下载
+            response['Content-Type'] = 'application/octet-stream'
+                # Content-Disposition就是当用户想把请求所得的内容存为一个文件的时候提供一个默认的文件名
+            response['Content-Disposition'] = 'attachment;filename="{0}"'.format(escape_uri_path(file_name))
+        except:
+            return HttpResponse("Sorry but Not Found the File")
+            
+        return response
 
 @csrf_exempt
 def getlist(request):
@@ -45,11 +107,19 @@ def getlist(request):
         lx=request.POST.get('lx1') 
         if lx !="":
             dic['lx']=lx
+    if request.POST.get('datestart') :
+        ds=request.POST.get('datestart') 
+        if ds !="":
+            dic['cjdate__gte']=ds
+    if request.POST.get('dateend') :
+        de=request.POST.get('dateend') 
+        if de !="":
+            dic['cjdate__lte']=de
     if dic:
         result =  Cjdj_info.objects.filter(**dic).values()
     else:
         result =  Cjdj_info.objects.all().values()
-    print(result)
+
     list_result = [entry for entry in result]
     p=Paginator(list_result ,int(nums))
     jishu=len(list_result )
