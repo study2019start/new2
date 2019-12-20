@@ -55,7 +55,7 @@ class First_classInfo(models.Model):
 
 class Second_classInfo(models.Model):
     name = models.TextField(max_length=100,verbose_name="名称")
-    context=models.TextField(max_length=1000,null=True,blank=True,verbose_name="内容")
+    context=models.TextField(max_length=90000,null=True,blank=True,verbose_name="内容")
     fid = models.ForeignKey(Second_class,on_delete=models.CASCADE,related_name="secondinfo")
     fj1= models.FileField(upload_to=upload_to,verbose_name="附件1")
     fj1n =models.TextField(max_length=100,null=True,blank=True,verbose_name="附件1名称")

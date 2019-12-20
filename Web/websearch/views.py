@@ -42,6 +42,24 @@ def vtable(request):
     return render(request, 'websearch/table.html',ffs)
 
 
+def getinfo(request):
+    req = request.POST.get("idn")
+    print(req)
+    s1={}
+    if req:
+        if str(req).find("sec"):
+            idn=int(str(req).replace("sec",""))
+            result1=Second_class.objects.get(id=idn)
+            s1["name"]=result1.name
+            count = result1.secondinfo.count() 
+            s1["count"]=count
+            if result1.secondinfo.count() >0:
+                s1["list"]=[a for a in result1.secondinfo.all().values]
+        print(s1)
+        return HttpResponse(json.dumps(s1,ensure_ascii=False),content_type="application/json,charset=utf-8")
+
+
+
 def getlistmu(request):
     idn=request.POST.get("idn")
     r1 = Second_class.objects.filter(fid_id=idn).values()
