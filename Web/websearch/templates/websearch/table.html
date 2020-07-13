@@ -24,7 +24,7 @@
   .sdn
   {
         color:rgb(39, 38, 38);
-        font-size:x-large;
+        font-size:18px;
         cursor:Pointer;
   }
   .d{
@@ -38,14 +38,14 @@
     <div class="layui-logo">layui 后台布局</div>
     <!-- 头部区域（可配合layui已有的水平导航）onclick="goto1(1000)"  -->
     <ul class="layui-nav layui-layout-left"  id="header-e" >
-      <li class="layui-nav-item"><a id="cx"  value=1000 style="cursor:hand;">成交查询</a></li>
+      <li class="layui-nav-item"><a class="cx"  value=1000 style="cursor:hand;">成交查询</a></li>
       {% for row  in  first1 %}
           <li class="layui-nav-item">
             <a class="head" value={{row.id}}  style="cursor:hand;">{{row.name}}</a>
             {%  if row.rows == 1 %}
             <dl class="layui-nav-child">
             {% for  rr in row.second %}
-            <dd><a class="heads" value='sec{{rr.id}}' id="cx"  style="cursor:hand;">{{rr.name}}</a></dd>
+            <dd><a class="cx" value='sec{{rr.id}}' id="cx"  style="cursor:hand;">{{rr.name}}</a></dd>
             {% endfor%}
             </dl>
             {% endif%}
@@ -67,7 +67,7 @@
             {%  if row.rows == 1 %}
             <dl class="layui-nav-child">
             {% for  rr in row.second %}
-            <dd><a class="headlefts"  value='sec{{rr.id}}' style="cursor:hand;">{{rr.name}}</a></dd>
+            <dd><a class="cx"  value='sec{{rr.id}}' style="cursor:hand;">{{rr.name}}</a></dd>
             {% endfor%}
             </dl>
             {% endif%}
@@ -80,8 +80,8 @@
   <div id ="searchdemo">
      
     </div>
-   
-    <script>
+   <div id = "searchfen"></div>
+  <script>
         function goto1(num)
         { 
         layui.use(['layer','laytpl'], function(){
@@ -152,7 +152,7 @@
             });
             });  */
            
-        $("#cx").click(function(){
+        $(".cx").click(function(){
             
           if($(this).attr("value")==1000)
           {
@@ -246,41 +246,93 @@
           else
           {
             var id= $(this).attr("value");
+            fenye(id)
+        } 
+      });
+      function showloading(t) {
+            if (t) {//如果是true则显示loading
+                console.log(t);
+//1。              
+   loading = layer.load(1, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                }); 
+//1.end 
+//2.带文字的
+ var loadingIndex = layer.load(2, { //icon支持传入0-2
+    shade: [0.5, 'gray'], //0.5透明度的灰色背景
+    content: '加载中...',
+    success: function (layero) {
+        layero.find('.layui-layer-content').css({
+            'padding-top': '39px',
+            'width': '60px'
+        });
+    }
+}); 
+//2 end
+            } else {//如果是false则关闭loading
+                console.log("关闭loading层:" + t);
+                layer.closeAll('loading');
+            }
+        }
+      function fenye(id){
             var gaptpl= second.innerHTML;
-            alert(id);
+            showloading(true);
             $.ajax(
             {
               
                 type:"POST",
                 dataType:"json",
                 url:"/search/getinfo",
-                data:{"idn":id,csrfmiddlewaretoken: '{{ csrf_token }}'},
+                data:{idn:id,csrfmiddlewaretoken: '{{ csrf_token }}',cur:1,limit:10},
                 success:function(result)
                 {
                    console.log(result);              
                   if(typeof(result) != "undefined")
                   {
+                  //  alert(result.name);
+                   
                     laytpl(gaptpl).render(result,function(html){
                   $("#searchdemo").empty();
                   $("#searchdemo").html(html);
-
-                  laypage.render({
+                  $("#searchfen").append($("<div id='test1' style='margin-top: 50px;float: right' ></div>"))
+              laypage.render({
               elem: 'test1'
               ,count: result.count
               ,limit: 10
               ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
               ,jump: function(obj){
-               console.log(obj)
+               showloading(true);
+               $.ajax(
+            {
+              
+                type:"POST",
+                dataType:"json",
+                url:"/search/getinfo",
+                data:{idn:id,csrfmiddlewaretoken: '{{ csrf_token }}',cur:obj.curr,limit:obj.limit},
+                success:function(result)
+                {       
+                  if(typeof(result) != "undefined")
+                  {
+                  //  alert(result.name);
+                    laytpl(gaptpl).render(result,function(html){
+                  $("#searchdemo").empty();
+                  $("#searchdemo").html(html);
+                    });
+                  }
+                }});
+                 setTimeout(function() { showloading(false);} , 700);
+                
                 }
                   });
                 });
               }
-           
+              showloading(false);
           }
           });
-        } 
-      });
+    }
+
     });
+    
         function downwen(obj){
           layui.use('layer', function(){
         var $ = layui.jquery;
@@ -381,17 +433,34 @@
           </script>
  <script id="second" type="text/html">
     <fieldset class="layui-elem-field" style="margin-top: 40px;">
-          <legend>{% verbatim %}{{d.name}}{% endverbatim %}</legend>
+          <legend style="font-size:25px">{% verbatim %}{{ d.name }}{% endverbatim %}</legend>
           {% verbatim %}{{# layui.each(d.list,function(index,item){   }}{% endverbatim %}
         <div id ="con" style="margin: 0 auto;text-align: center">
           <div class="d">
-          <a   class="sdn"  value='sinf{{tiem.id}}' >{% verbatim %}{{item.name}}{% endverbatim %}</a>
+          <a   class="sdn"  value='sinf'{% verbatim %}{{ item.id }}{% endverbatim %} >{% verbatim %}{{ item.name }}{% endverbatim %}</a>
           </div>
           {% verbatim %}{{#  }); }}{% endverbatim %}
           {% verbatim %}{{#  if(d.list.length === 0){ }}{% endverbatim %}
-            无数据
-            {% verbatim %}{{# }); }{% endverbatim %}
-        <div id="test1" style="margin-top: 50px;float: right" ></div>
+          <div id ="con" style="margin: 0 auto;text-align: center"><span style="font-size:18px">无数据</span></div>
+            {% verbatim %}{{# } }}{% endverbatim %}
+      </fieldset>
+   </script>
+   <script id="secondinfo" type="text/html">
+    <fieldset class="layui-elem-field" style="margin-top: 40px;">
+          <legend style="font-size:25px">{% verbatim %}{{ d.name }}{% endverbatim %}</legend>
+        <div id ="con" style="margin: 0 auto;text-align: center">
+          <div class="d">
+              {% verbatim %}{{# layui.each(d.list,function(index,item){   }}{% endverbatim %}
+            <a  onclick=downwen(this) style="cursor:hand;margin-bottom:20px" value=''{% verbatim %}{{ item.down }}{% endverbatim %}>{% verbatim %}{{ item.name }}{% endverbatim %}</a>
+            {% verbatim %}{{#  }); }}{% endverbatim %}
+          <a   class="sdn"  >{% verbatim %}{{ item.context }}{% endverbatim %}</a>
+          {% verbatim %}{{#  if(d.context.length === 0){ }}{% endverbatim %}
+          <div id ="con" style="margin: 0 auto;text-align: center"><span style="font-size:18px">无内容</span></div>
+            {% verbatim %}{{# } }}{% endverbatim %}
+          </div>
+          
+         
+       
       </fieldset>
    </script>
 </body>

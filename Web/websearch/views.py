@@ -27,16 +27,23 @@ class DateEncoder(json.JSONEncoder):
 
 
 def vtable(request):
-    fi=First_class.objects.all().values()
-    fis=[a for a in fi]
+    #fi=First_class.objects.all().values()
+    fi=First_class.objects.all()
+    #fis=[a for a in fi]
     ss=[]
-    for ff in fis:
-        f=First_class.objects.get(id=ff['id'])
-        ff['rows']=0
-        if f.second.count()>0:
-            ff['rows']=1
-            ff['second']=[a for a in f.second.all().values()]
-        ss.append(ff)
+    for ff in fi:
+        fdic={}
+        #f=First_class.objects.get(id=ff['id'])
+        f2=ff.second.all().values()
+        print(ff)
+        fdic['id']=ff.id
+        fdic['name']=ff.name
+        fdic['about']=ff.about
+        fdic['rows']=0
+        if len(f2)>0:
+            fdic['rows']=1
+            fdic['second']=[a for a in f2]
+        ss.append(fdic)
     ffs={'first1':ss}
     print(ss)
     return render(request, 'websearch/table.html',ffs)
@@ -44,18 +51,28 @@ def vtable(request):
 
 def getinfo(request):
     req = request.POST.get("idn")
-    print(req)
+    cur = request.POST.get("cur")
+    limit = request.POST.get("limit")
+    print(limit)
+    print(cur)
     s1={}
     if req:
-        if str(req).find("sec"):
+        if str(req).find("sec")>=0:
             idn=int(str(req).replace("sec",""))
             result1=Second_class.objects.get(id=idn)
             s1["name"]=result1.name
             count = result1.secondinfo.count() 
             s1["count"]=count
-            if result1.secondinfo.count() >0:
-                s1["list"]=[a for a in result1.secondinfo.all().values]
-        print(s1)
+            if count > 0:
+                res1=[a for a in result1.secondinfo.all().values()]
+                if  limit and cur:
+                    res2=Page_fen(res1,limit,cur)
+                else:
+                    res2=res1
+                s1["list"]=res2
+            else:
+                s1["list"]=[]
+        print(json.dumps(s1,ensure_ascii=False))
         return HttpResponse(json.dumps(s1,ensure_ascii=False),content_type="application/json,charset=utf-8")
 
 
@@ -139,13 +156,35 @@ def getlist(request):
         result =  Cjdj_info.objects.all().values()
 
     list_result = [entry for entry in result]
-    p=Paginator(list_result ,int(nums))
+    #p=Paginator(list_result ,int(nums))
     jishu=len(list_result )
     dictt['code']=0
     dictt['msg']=""
     dictt['count']=jishu
+    # try:
+    #     page= p.page(int(curr)).object_list
+    # todo: 注意捕获异常
+    # except PageNotAnInteger:
+    #     如果请求的页数不是整数, 返回第一页。
+    #     page = p.page(1).object_list
+    # except EmptyPage:
+    #     如果请求的页数不在合法的页数范围内，返回结果的最后一页。
+    #     page =p.page(p.num_pages).object_list
+    # except InvalidPage:
+    #     如果请求的页数不存在, 重定向页面
+    #     dictt['data']=""
+    #     return HttpResponse(json.dumps(dictt,ensure_ascii=False),content_type="application/json,charset=utf-8")
+
+
+    dictt['data']=Page_fen(list_result ,int(nums),int(curr))
+    return HttpResponse(json.dumps(dictt,cls=DateEncoder,ensure_ascii=False),content_type="application/json,charset=utf-8")
+
+
+#分页
+def  Page_fen(list_result,nums,curr):
+    p=Paginator(list_result ,int(nums))
     try:
-        page= p.page(int(curr))
+        page= p.page(int(curr)).object_list
     # todo: 注意捕获异常
     except PageNotAnInteger:
         # 如果请求的页数不是整数, 返回第一页。
@@ -154,10 +193,5 @@ def getlist(request):
         # 如果请求的页数不在合法的页数范围内，返回结果的最后一页。
         page =p.page(p.num_pages).object_list
     except InvalidPage:
-        # 如果请求的页数不存在, 重定向页面
-        dictt['data']=""
-        return HttpResponse(json.dumps(dictt,ensure_ascii=False),content_type="application/json,charset=utf-8")
-
-
-    dictt['data']=page.object_list
-    return HttpResponse(json.dumps(dictt,cls=DateEncoder,ensure_ascii=False),content_type="application/json,charset=utf-8")
+        page=""
+    return page

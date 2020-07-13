@@ -5,8 +5,15 @@ import time
 
 def upload_to(instance, filename):
     stt = time.strftime("%Y%m%d", time.localtime())
-    st1 = "04d" % (time.time()-int(time.time()))*10000
+    st1 = "%s" % (time.time())
     return '/'.join(['cjdj', stt, st1+filename])
+
+
+def upload_to2(instance, filename):
+    
+    st1 = "%s" % (time.time())
+    print(st1)
+    return '/'.join(['upload', st1+filename])
 
 
 class user(models.Model):
@@ -42,14 +49,14 @@ class First_classInfo(models.Model):
     name = models.TextField(max_length=100,verbose_name="名称")
     context=models.TextField(max_length=1000,verbose_name="内容")
     fid = models.OneToOneField(First_class,on_delete=models.CASCADE)
-    fj1= models.FileField(upload_to=upload_to,null=True,blank=True,verbose_name="附件1")
+    fj1= models.FileField(upload_to=upload_to2,null=True,blank=True,verbose_name="附件1")
     fj1n =models.TextField(max_length=100,null=True,blank=True,verbose_name="附件1名称")
     fj2n =models.TextField(max_length=100,null=True,blank=True,verbose_name="附件2名称")
     fj3n =models.TextField(max_length=100,null=True,blank=True,verbose_name="附件3名称")
     fj4n =models.TextField(max_length=100,null=True,blank=True,verbose_name="附件4名称")
-    fj2= models.FileField(upload_to=upload_to,null=True,blank=True,verbose_name="附件2")
-    fj3= models.FileField(upload_to=upload_to,null=True,blank=True,verbose_name="附件3")
-    fj4= models.FileField(upload_to=upload_to,null=True,blank=True,verbose_name="附件4")
+    fj2= models.FileField(upload_to=upload_to2,null=True,blank=True,verbose_name="附件2")
+    fj3= models.FileField(upload_to=upload_to2,null=True,blank=True,verbose_name="附件3")
+    fj4= models.FileField(upload_to=upload_to2,null=True,blank=True,verbose_name="附件4")
 
 
 
@@ -57,20 +64,20 @@ class Second_classInfo(models.Model):
     name = models.TextField(max_length=100,verbose_name="名称")
     context=models.TextField(max_length=90000,null=True,blank=True,verbose_name="内容")
     fid = models.ForeignKey(Second_class,on_delete=models.CASCADE,related_name="secondinfo")
-    fj1= models.FileField(upload_to=upload_to,verbose_name="附件1")
+    fj1= models.FileField(upload_to=upload_to2,verbose_name="附件1")
     fj1n =models.TextField(max_length=100,null=True,blank=True,verbose_name="附件1名称")
     fj2n =models.TextField(max_length=100,null=True,blank=True,verbose_name="附件2名称")
     fj3n =models.TextField(max_length=100,null=True,blank=True,verbose_name="附件3名称")
     fj4n =models.TextField(max_length=100,null=True,blank=True,verbose_name="附件4名称")
-    fj2= models.FileField(upload_to=upload_to,null=True,blank=True,verbose_name="附件2")
-    fj3= models.FileField(upload_to=upload_to,null=True,blank=True,verbose_name="附件3")
-    fj4= models.FileField(upload_to=upload_to,null=True,blank=True,verbose_name="附件4")
+    fj2= models.FileField(upload_to=upload_to2,null=True,blank=True,verbose_name="附件2")
+    fj3= models.FileField(upload_to=upload_to2,null=True,blank=True,verbose_name="附件3")
+    fj4= models.FileField(upload_to=upload_to2,null=True,blank=True,verbose_name="附件4")
     fj5n=models.TextField(max_length=100,null=True,blank=True,verbose_name="附件5名称")
-    fj5= models.FileField(upload_to=upload_to,null=True,blank=True,verbose_name="附件5")
+    fj5= models.FileField(upload_to=upload_to2,null=True,blank=True,verbose_name="附件5")
     fj6n=models.TextField(max_length=100,null=True,blank=True,verbose_name="附件6名称")
-    fj6= models.FileField(upload_to=upload_to,null=True,blank=True,verbose_name="附件6")
+    fj6= models.FileField(upload_to=upload_to2,null=True,blank=True,verbose_name="附件6")
     fj7n=models.TextField(max_length=100,null=True,blank=True,verbose_name="附件7名称")
-    fj7= models.FileField(upload_to=upload_to,null=True,blank=True,verbose_name="附件7")
+    fj7= models.FileField(upload_to=upload_to2,null=True,blank=True,verbose_name="附件7")
 
 
 
